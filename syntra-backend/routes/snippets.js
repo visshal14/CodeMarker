@@ -63,7 +63,7 @@ router.put('/:id', protect(['developer']), async (req, res) => {
     const { title, description, language, code } = req.body;
 
     try {
-        const snippet = await Snippet.findById(req.params.id).populate('author', 'username');
+        const snippet = await Snippet.findById(req.params.id).populate('author', 'username').populate('reviewers', 'username');
 
         if (!snippet) {
             return res.status(404).json({ message: 'Snippet not found.' });
@@ -110,19 +110,24 @@ router.put('/:id/assign-reviewers', protect(['developer']), async (req, res) => 
     const { reviewers } = req.body;
 
     try {
-        const snippet = await Snippet.findById(req.params.id);
+        const snippet = await Snippet.findById(req.params.id).populate('author', 'username').populate('reviewers', 'username');
+
 
         if (!snippet) {
             return res.status(404).json({ message: 'Snippet not found.' });
         }
 
-        if (snippet.author.toString() !== req.user.userId) {
+        if (snippet.author?._id.toString() !== req.user.userId) {
             return res.status(403).json({ message: 'Unauthorized.' });
         }
 
         snippet.reviewers = reviewers;
         await snippet.save();
-        res.json(snippet);
+
+        const updatedSnippet = await Snippet.findById(req.params.id).populate('author', 'username').populate('reviewers', 'username');
+
+
+        res.json(updatedSnippet);
     } catch (error) {
         res.status(500).json({ error: `Error assigning reviewers: ${error.message}` });
     }
@@ -131,13 +136,13 @@ router.put('/:id/assign-reviewers', protect(['developer']), async (req, res) => 
 
 router.put('/:id/mark-reviewed', protect(['reviewer']), async (req, res) => {
     try {
-        const snippet = await Snippet.findById(req.params.id);
+        const snippet = await Snippet.findById(req.params.id).populate('author', 'username').populate('reviewers', 'username');
 
         if (!snippet) {
             return res.status(404).json({ message: 'Snippet not found.' });
         }
-
-        if (!snippet.reviewers.includes(req.user.userId)) {
+        console.log(snippet.reviewers);
+        if (!snippet.reviewers.some(reviewer => reviewer._id.toString() === req.user.userId)) {
             return res.status(403).json({ message: 'Unauthorized: You are not assigned to review this snippet.' });
         }
 
@@ -151,9 +156,7 @@ router.put('/:id/mark-reviewed', protect(['reviewer']), async (req, res) => {
 
 router.get('/review/assigned', protect(['reviewer']), async (req, res) => {
     try {
-        const snippets = await Snippet.find({ reviewers: req.user.userId })
-            .populate('author', 'username')
-            .populate('reviewers', 'username');
+        const snippets = await Snippet.find({ reviewers: req.user.userId }).populate('author', 'username').populate('reviewers', 'username');
 
         const snippetsWithComments = await Promise.all(
             snippets.map(async snippet => {
