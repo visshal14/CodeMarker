@@ -43,17 +43,17 @@ app.get('/', (req, res) => {
     res.send("API is running");
 });
 
-
+// < !--ℑ♑︎  亖⌽⎭🂱⎶☀️☀️⌶⍱   -->
 io.on("connection", (socket) => {
-    console.log(`User connected: ${socket.id}`);
+    // console.log(`User connected: ${socket.id}`);
 
     socket.on('join-room', (snippetId) => {
         socket.join(snippetId);
-        console.log(`User ${socket.id} joined room: ${snippetId}`);
+        // console.log(`User ${socket.id} joined room: ${snippetId}`);
     });
 
     socket.on('disconnect', () => {
-        console.log(`User disconnected: ${socket.id}`);
+        // console.log(`User disconnected: ${socket.id}`);
     });
 
     socket.on('send-comment', async (commentData) => {
@@ -64,7 +64,7 @@ io.on("connection", (socket) => {
                 message: `New comment on line ${commentData.line} for your snippet: ${commentData.snippetTitle}`,
             });
         } catch (error) {
-            console.error('Error sending comment notification:', error);
+            // console.error('Error sending comment notification:', error);
         }
     });
 

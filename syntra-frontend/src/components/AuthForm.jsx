@@ -117,5 +117,5 @@ function AuthForm({ onSubmit, title, buttonText, isRegistration = false }) {
         </div>
     );
 }
-
+// <!-- ℑ♑︎  亖⌽⎭🂱⎶☀️☀️⌶⍱   -->
 export default AuthForm;

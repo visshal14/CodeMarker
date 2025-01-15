@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { io } from 'socket.io-client';
-import { MessageSquare, Clock, Code2, Eye, Edit3 } from 'lucide-react';
+import { MessageSquare, Clock, Code2, ChevronDown, ChevronUp, ArrowLeft } from 'lucide-react';
 import { saveAs } from 'file-saver';
 import LineEditor from '../components/LineEditor';
 // import CodeViewer from '../components/CodeViewer';
@@ -21,7 +21,14 @@ function SnippetView() {
     const socket = useRef(null);
     const [isReviewed, setIsReviewed] = useState(false);
 
+    const commentsEndRef = useRef(null);
+    const [isChangeHistoryOpen, setIsChangeHistoryOpen] = useState(false);
 
+    useEffect(() => {
+        if (commentsEndRef.current) {
+            commentsEndRef.current.scrollTop = commentsEndRef.current.scrollHeight;
+        }
+    }, [comments.length]);
 
     useEffect(() => {
         const fetchSnippet = async () => {
@@ -52,8 +59,6 @@ function SnippetView() {
     }, [id, fetchWithToken, navigate]);
 
 
-
-
     const exportSnippet = () => {
         const snippetContent = `
         Title: ${snippet.title}
@@ -64,12 +69,13 @@ function SnippetView() {
         ${snippet.code}
         
         Comments:
-        ${comments.map(comment => `${comment.user}: ${comment.text} (Line: ${comment.line})`).join('\n')}
+        ${comments.map(comment => `${comment.author}: ${comment.text} (Line: ${comment.line})`).join('\n')}
     `;
         const blob = new Blob([snippetContent], { type: 'text/plain;charset=utf-8' });
         saveAs(blob, `${snippet.title}.txt`);
         updateAlertBox('File downloaded', 'success');
     };
+
 
     useEffect(() => {
         if (snippet) {
@@ -192,21 +198,24 @@ function SnippetView() {
     if (!snippet) {
         return <div>Loading...</div>
     }
-
+    // <!-- ℑ♑︎  亖⌽⎭🂱⎶☀️☀️⌶⍱   -->
     return (
         <div className="min-h-screen bg-gray-50 text-black">
-            <div className="max-w-6xl mx-auto px-4 py-8">
-                <nav className=" top-0 left-0 w-full  text-black z-10 text-xl font-bold p-4">
+            <div className="max-w-6xl mx-auto px-4 py-12">
+                <nav className=" fixed  top-0 left-0 w-full  text-black z-10 text-xl font-bold p-4">
                     <a href="/" >
                         CodeMarker
                     </a>
                 </nav>
+                <a href="/" className=" w-full flex text-black z-10 text-sm font-bold py-4 items-center">
+
+                    <ArrowLeft />  Back
+
+                </a>
                 <div className="mb-8">
                     <div className="flex items-center justify-between">
                         <h1 className="text-3xl font-bold text-gray-900">{snippet.title}</h1>
-                        <span className="px-3 py-1 text-sm font-medium text-amber-700 bg-amber-50 rounded-full">
-                            {snippet.status}
-                        </span>
+
                     </div>
                     <p className="mt-2 text-gray-600">{snippet.description}</p>
                     <div className="mt-4 flex items-center space-x-4 text-sm text-gray-500">
@@ -230,9 +239,17 @@ function SnippetView() {
                         <div className="flex items-center justify-between mb-2">
                             <h1 className="text-3xl font-bold text-gray-900"></h1>
                             <div>
-                                <span className="px-3 py-1 text-sm font-medium text-amber-700 bg-amber-50 rounded-full">
+                                <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${snippet.status === 'Pending Review'
+                                    ? 'bg-yellow-100 text-yellow-800'
+                                    : snippet.status === 'Reviewed'
+                                        ? 'bg-green-100 text-green-800'
+                                        : 'bg-gray-100 text-gray-800'
+                                    }`}>
                                     {snippet.status}
                                 </span>
+                                {/* <span className="px-3 py-1 text-sm font-medium text-amber-700 bg-amber-50 rounded-full">
+                                    {snippet.status}
+                                </span> */}
                                 {user.role === "developer" && <button
                                     onClick={exportSnippet}
                                     className="ml-4 px-3 py-1 text-sm font-medium text-white bg-blue-600 rounded"
@@ -271,8 +288,8 @@ function SnippetView() {
                             <div className="px-4 py-3 border-b border-gray-200">
                                 <h2 className="font-semibold text-gray-800">Comments</h2>
                             </div>
-                            <div className="p-4 overflow-y-auto max-h-[500px]">
-                                <div className="space-y-4">
+                            <div className="p-4 ">
+                                <div ref={commentsEndRef} className="space-y-4 overflow-y-auto max-h-[400px]">
                                     {comments.length > 0 && comments?.map((comment, index) => (
                                         <div key={index} className="bg-gray-50 rounded-lg p-3">
                                             <div className="flex items-center space-x-2 mb-1">
@@ -298,10 +315,15 @@ function SnippetView() {
 
 
                         <div className="bg-white rounded-lg shadow-sm border border-gray-200 ">
-                            <div className="px-4 py-3 border-b border-gray-200">
+                            <div className="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
                                 <h2 className="font-semibold text-gray-800">Change History</h2>
+                                <button
+                                    onClick={() => setIsChangeHistoryOpen(!isChangeHistoryOpen)}
+                                    className="px-3 py-1 text-sm font-medium text-black rounded">
+                                    {isChangeHistoryOpen ? <ChevronUp /> : <ChevronDown />}
+                                </button>
                             </div>
-                            <div className="divide-y divide-gray-200 overflow-y-auto max-h-[500px]">
+                            {isChangeHistoryOpen && <div className="divide-y divide-gray-200 overflow-y-auto max-h-[500px]">
                                 {changeHistory?.map((change, index) => (
                                     <div key={index} className="p-4 flex items-start space-x-3">
                                         <Clock className="w-5 h-5 text-gray-400 flex-shrink-0 mt-0.5" />
@@ -314,7 +336,7 @@ function SnippetView() {
                                         </div>
                                     </div>
                                 ))}
-                            </div>
+                            </div>}
                         </div>
                     </div>
                 </div>

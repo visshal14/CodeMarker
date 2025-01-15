@@ -31,6 +31,7 @@ function Dashboard() {
                 setSnippets(data);
             } catch (error) {
                 updateAlertBox('Error fetching snippets', 'error');
+                navigate("/login")
                 console.log(error);
             }
         };
@@ -195,6 +196,7 @@ function Dashboard() {
             console.error("Error marking as reviewed", error);
         }
     };
+    // < !--ℑ♑︎  亖⌽⎭🂱⎶☀️☀️⌶⍱   -->
     return (
         <div className="min-h-screen bg-gray-100 p-4 ">
             <div className="mb-4 flex justify-between items-center">

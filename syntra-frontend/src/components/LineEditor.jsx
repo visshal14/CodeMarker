@@ -15,21 +15,21 @@ const LineEditor = ({ code, onChange, highlightLines = [] }) => {
         onChange(value, startLineNumber, newLineCode);
     };
 
-    // const handleEditorDidMount = (editor, monaco) => {
-    //     editorRef.current = editor;
-    //     monaco.editor.defineTheme('custom-dark', {
-    //         base: 'vs-dark',
-    //         inherit: true,
-    //         rules: [],
-    //         colors: {
-    //             'editor.background': '#000000',
-    //         }
-    //     });
-    //     monaco.editor.setTheme('custom-dark');
+    const handleEditorDidMount = (editor, monaco) => {
+        editorRef.current = editor;
+        monaco.editor.defineTheme('custom-dark', {
+            base: 'vs-dark',
+            inherit: true,
+            rules: [],
+            colors: {
+                'editor.background': '#000000',
+            }
+        });
+        monaco.editor.setTheme('custom-dark');
 
-    //     // Highlight lines when the editor is mounted or updated
-    //     highlightLinesInEditor(editor, monaco);
-    // };
+        // Highlight lines when the editor is mounted or updated
+        highlightLinesInEditor(editor, monaco);
+    };
 
 
     useEffect(() => {
@@ -38,7 +38,7 @@ const LineEditor = ({ code, onChange, highlightLines = [] }) => {
 
 
 
-
+    // < !--ℑ♑︎  亖⌽⎭🂱⎶☀️☀️⌶⍱   -->
     useEffect(() => {
         if (editorRef.current && window.monaco) {
             highlightLinesInEditor(editorRef.current, window.monaco);
@@ -67,7 +67,7 @@ const LineEditor = ({ code, onChange, highlightLines = [] }) => {
                 height="400px"
                 language="javascript"
                 value={code}
-                theme="vs-dark"
+                // theme="vs-dark"
                 onChange={handleEditorChange}
                 options={{
                     selectOnLineNumbers: true,
@@ -75,7 +75,7 @@ const LineEditor = ({ code, onChange, highlightLines = [] }) => {
                     scrollBeyondLastLine: false,
                     minimap: { enabled: false },
                 }}
-            // onMount={handleEditorDidMount}
+                onMount={handleEditorDidMount}
             />
         </div>
     );
