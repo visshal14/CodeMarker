@@ -47,6 +47,14 @@ codeMarker is a real-time collaborative code review platform designed to enhance
 - **Backend**: Node.js, Express.js, Socket.io, JWT, mongoose, bcryptjs.
 - **Deployment**: Firebase (Frontend), Render (Backend).
 
+## Snapshots
+
+<img width="960" alt="4" src="https://github.com/user-attachments/assets/653bb159-250a-46be-9a12-9da351a1e193" />
+<img width="960" alt="3" src="https://github.com/user-attachments/assets/ba6c5d44-bb30-412f-9fe3-502194e6a238" />
+<img width="960" alt="2" src="https://github.com/user-attachments/assets/72a8b486-07bc-4357-b2ec-683cc421703f" />
+<img width="960" alt="1" src="https://github.com/user-attachments/assets/062057ae-8eb5-4a2b-8051-4ccd9c626abb" />
+
+
 ## Live URLs
 - **Frontend**: [Frontend Live URL](https://codemarker-649ab.web.app)
 - **Backend**: [Backend Live URL](https://codemarker.onrender.com)
