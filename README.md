@@ -67,14 +67,14 @@ codeMarker is a real-time collaborative code review platform designed to enhance
 
 2. **Frontend Setup:**
     ```bash
-    cd syntra-frontend
+    cd frontend
     npm install
     npm run dev
     ```
 
 3. **Backend Setup:**
    ```bash
-    cd syntra-backend
+    cd backend
     npm install
     npm start
    ```
